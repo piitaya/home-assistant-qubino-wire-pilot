@@ -1,0 +1,8 @@
+{
+  "domain": "qubino_wire_pilot",
+  "name": "Qubino wire pilot",
+  "documentation": "https://github.com/piitaya/home-assitant-qubino_wire_pilot",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@piitaya"]
+}
