@@ -114,24 +114,11 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
         """Update unit attributes."""
 
     @property
-    def hvac_mode(self) -> str:
-        """Return hvac operation ie. heat, cool mode.
-        Need to be one of HVAC_MODE_*.
-        """
-        return HVAC_MODE_HEAT
-
-    @property
-    def hvac_modes(self) -> List[str]:
-        """Return the list of available hvac operation modes.
-        Need to be a subset of HVAC_MODES.
-        """
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-
-    @property
     def name(self):
         """Return the name of the climate device."""
         return self._name
 
+    # Temperature
     @property
     def temperature_unit(self):
         """Return the unit of measurement."""
@@ -141,12 +128,6 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     def current_temperature(self):
         """Return the sensor temperature."""
         return self._cur_temperature
-
-    # Presets
-    @property
-    def preset_modes(self):
-        """List of available preset modes."""
-        return [PRESET_COMFORT, PRESET_ECO]
 
     @property
     def heater_value(self):
@@ -162,6 +143,12 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
             brightness = round(brightness / 255 * 99, 0)
 
         return brightness
+
+    # Presets
+    @property
+    def preset_modes(self):
+        """List of available preset modes."""
+        return [PRESET_COMFORT, PRESET_ECO]
 
     @property
     def preset_mode(self):
