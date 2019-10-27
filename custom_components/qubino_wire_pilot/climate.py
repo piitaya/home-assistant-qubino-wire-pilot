@@ -40,19 +40,13 @@ DEFAULT_NAME = "Qubino Thermostat"
 CONF_HEATER = "heater"
 CONF_SENSOR = "sensor"
 CONF_NAME = "name"
-CONF_INITIAL_HVAC_MODE = "initial_hvac_mode"
 
-PRESET_COMFORT_1 = "Confort -1"
-PRESET_COMFORT_2 = "Confort -2"
-
-PRESET_TO_VALUE = {
-    PRESET_NONE: 10,
-    PRESET_AWAY: 20,
-    PRESET_ECO: 30,
-    PRESET_COMFORT_2: 40,
-    PRESET_COMFORT_1: 50,
-    PRESET_COMFORT: 99,
-}
+VALUE_OFF = 10
+VALUE_FROST = 20
+VALUE_ECO = 30
+VALUE_COMFORT_2 = 40
+VALUE_COMFORT_1 = 50
+VALUE_COMFORT = 99
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -61,9 +55,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     }
 )
-
-# PRESETS = [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
-PRESETS = [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
 
 SUPPORT_FLAGS = SUPPORT_PRESET_MODE
 
@@ -87,8 +78,6 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
         self._name = name
         self.heater_entity_id = heater_entity_id
         self.sensor_entity_id = sensor_entity_id
-        self._havc_mode = HVAC_MODE_AUTO
-        self._preset_mode = PRESET_COMFORT
         self._cur_temperature = None
 
     async def async_added_to_hass(self):
@@ -157,10 +146,10 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     @property
     def preset_modes(self):
         """List of available preset modes."""
-        return PRESETS
+        return [PRESET_COMFORT, PRESET_ECO]
 
     @property
-    def preset_mode(self):
+    def heater_value(self):
         state = self.hass.states.get(self.heater_entity_id)
 
         if state is None:
@@ -172,19 +161,26 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
         else:
             brightness = round(brightness / 255 * 99, 0)
 
-        preset_mode = PRESET_COMFORT
-        """Return the preset_mode."""
-        for (preset, value) in PRESET_TO_VALUE.items():
-            if value >= brightness:
-                preset_mode = preset
-                break
-        
-        return preset_mode
+        return brightness
+
+    @property
+    def preset_mode(self):
+        value = self.heater_value
+
+        if value <= VALUE_FROST:
+            return PRESET_NONE
+        elif value <= VALUE_ECO:
+            return PRESET_ECO
+        else:
+            return PRESET_COMFORT
 
     async def async_set_preset_mode(self, preset_mode):
-        self._preset_mode = preset_mode
+        value = VALUE_FROST
 
-        value = PRESET_TO_VALUE[preset_mode]
+        if preset_mode == PRESET_ECO:
+            value = VALUE_ECO
+        elif preset_mode == PRESET_COMFORT:
+            value = VALUE_COMFORT
 
         await self._async_set_heater_value(value)
 
@@ -192,15 +188,26 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     @property
     def hvac_modes(self):
         """List of available operation modes."""
-        return [HVAC_MODE_AUTO]
-        # return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
-    def set_hvac_mode(self, havc_mode):
-        return
+    async def async_set_hvac_mode(self, hvac_mode):
+        value = VALUE_FROST
+
+        if hvac_mode == HVAC_MODE_HEAT:
+            value = VALUE_COMFORT
+        elif hvac_mode == HVAC_MODE_OFF:
+            value = VALUE_FROST
+
+        await self._async_set_heater_value(value)
 
     @property
     def hvac_mode(self):
-        return self._havc_mode
+        value = self.heater_value
+
+        if value <= VALUE_FROST:
+            return HVAC_MODE_OFF
+        else:
+            return HVAC_MODE_HEAT
 
     @callback
     def _async_heater_changed(self, entity_id, old_state, new_state):
@@ -223,6 +230,9 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
 
     async def _async_set_heater_value(self, value):
         """Turn heater toggleable device on."""
-        data = {ATTR_ENTITY_ID: self.heater_entity_id, light.ATTR_BRIGHTNESS: value * 255 / 99}
+        data = {
+            ATTR_ENTITY_ID: self.heater_entity_id,
+            light.ATTR_BRIGHTNESS: value * 255 / 99,
+        }
 
         await self.hass.services.async_call(light.DOMAIN, light.SERVICE_TURN_ON, data)
