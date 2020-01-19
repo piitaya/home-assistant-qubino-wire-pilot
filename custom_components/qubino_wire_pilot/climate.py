@@ -148,22 +148,26 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     @property
     def preset_modes(self):
         """List of available preset modes."""
-        return [PRESET_COMFORT, PRESET_ECO]
+        return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
 
     @property
     def preset_mode(self):
         value = self.heater_value
 
-        if value <= VALUE_FROST:
+        if value <= VALUE_OFF:
             return PRESET_NONE
+        elif value <= VALUE_FROST:
+            return PRESET_AWAY
         elif value <= VALUE_ECO:
             return PRESET_ECO
         else:
             return PRESET_COMFORT
 
     async def async_set_preset_mode(self, preset_mode):
-        value = VALUE_FROST
+        value = VALUE_OFF
 
+        if preset_mode == PRESET_AWAY:
+            value = VALUE_FROST
         if preset_mode == PRESET_ECO:
             value = VALUE_ECO
         elif preset_mode == PRESET_COMFORT:
@@ -183,7 +187,7 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
         if hvac_mode == HVAC_MODE_HEAT:
             value = VALUE_COMFORT
         elif hvac_mode == HVAC_MODE_OFF:
-            value = VALUE_FROST
+            value = VALUE_OFF
 
         await self._async_set_heater_value(value)
 
@@ -191,7 +195,7 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     def hvac_mode(self):
         value = self.heater_value
 
-        if value <= VALUE_FROST:
+        if value <= VALUE_OFF:
             return HVAC_MODE_OFF
         else:
             return HVAC_MODE_HEAT
