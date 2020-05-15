@@ -24,6 +24,7 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_START,
     ATTR_ENTITY_ID,
     STATE_UNKNOWN,
+    STATE_UNAVAILABLE,
 )
 from homeassistant.core import callback
 
@@ -154,6 +155,8 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     def preset_mode(self):
         value = self.heater_value
 
+        if value is None:
+            return STATE_UNKNOWN
         if value <= VALUE_OFF:
             return PRESET_NONE
         elif value <= VALUE_FROST:
@@ -195,6 +198,8 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     def hvac_mode(self):
         value = self.heater_value
 
+        if value is None:
+            return STATE_UNKNOWN
         if value <= VALUE_OFF:
             return HVAC_MODE_OFF
         else:
@@ -215,7 +220,8 @@ class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
     @callback
     def _async_update_temperature(self, state):
         try:
-            self._cur_temperature = float(state.state)
+            if (state.state != STATE_UNAVAILABLE):
+                self._cur_temperature = float(state.state)
         except ValueError as ex:
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
 
