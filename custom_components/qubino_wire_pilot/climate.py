@@ -5,7 +5,12 @@ from typing import List
 
 import voluptuous as vol
 
-from homeassistant.components.climate import ClimateDevice, PLATFORM_SCHEMA
+from homeassistant.components.climate import PLATFORM_SCHEMA
+try:
+    from homeassistant.components.climate import ClimateEntity
+except ImportError:
+    from homeassistant.components.climate import ClimateDevice as ClimateEntity
+
 from homeassistant.components.climate.const import (
     SUPPORT_PRESET_MODE,
     HVAC_MODE_AUTO,
@@ -71,7 +76,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     )
 
 
-class QubinoWirePilotClimate(ClimateDevice, RestoreEntity):
+class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     """Representation of a Qubino Wire Pilot device."""
 
     def __init__(self, name, heater_entity_id, sensor_entity_id):
