@@ -13,7 +13,6 @@ except ImportError:
 
 from homeassistant.components.climate.const import (
     SUPPORT_PRESET_MODE,
-    HVAC_MODE_AUTO,
     HVAC_MODE_OFF,
     HVAC_MODE_HEAT,
     PRESET_ECO,
