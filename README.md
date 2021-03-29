@@ -68,3 +68,7 @@ climate:
     heater: light.heater_living_room_dimmer
     sensor: sensor.temperature_living_room
 ```
+
+## Lovelace
+
+You can use the [climate-mode-entity-row](https://github.com/piitaya/lovelace-climate-mode-entity-row) card in your lovelace dashboard to easily switch between modes.
