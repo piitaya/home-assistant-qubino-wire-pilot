@@ -44,7 +44,7 @@ DEFAULT_NAME = "Qubino Thermostat"
 
 CONF_HEATER = "heater"
 CONF_SENSOR = "sensor"
-CONF_6_ORDER = "6_order"
+CONF_ADDITIONAL_MODES = "additional_modes"
 CONF_NAME = "name"
 
 PRESET_COMFORT_1 = "comfort-1"
@@ -62,7 +62,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(CONF_HEATER): cv.entity_id,
         vol.Optional(CONF_SENSOR): cv.entity_id,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_6_ORDER, default=False): cv.boolean,
+        vol.Optional(CONF_ADDITIONAL_MODES, default=False): cv.boolean,
     }
 )
 
@@ -74,22 +74,22 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     name = config.get(CONF_NAME)
     heater_entity_id = config.get(CONF_HEATER)
     sensor_entity_id = config.get(CONF_SENSOR)
-    six_order = config.get(CONF_6_ORDER)
+    additional_modes = config.get(CONF_ADDITIONAL_MODES)
     
     async_add_entities(
-        [QubinoWirePilotClimate(name, heater_entity_id, sensor_entity_id, six_order)]
+        [QubinoWirePilotClimate(name, heater_entity_id, sensor_entity_id, additional_modes)]
     )
 
 
 class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     """Representation of a Qubino Wire Pilot device."""
 
-    def __init__(self, name, heater_entity_id, sensor_entity_id, six_order):
+    def __init__(self, name, heater_entity_id, sensor_entity_id, additional_modes):
         """Initialize the climate device."""
         self._name = name
         self.heater_entity_id = heater_entity_id
         self.sensor_entity_id = sensor_entity_id
-        self.six_order = six_order
+        self.additional_modes = additional_modes
         self._cur_temperature = None
 
     async def async_added_to_hass(self):
@@ -160,7 +160,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     @property
     def preset_modes(self):
         """List of available preset modes."""
-        if self.six_order:
+        if self.additional_modes:
             return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]
         else:
             return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
@@ -177,9 +177,9 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             return PRESET_AWAY
         elif value <= VALUE_ECO:
             return PRESET_ECO
-        elif value <= VALUE_COMFORT_2 and self.six_order:
+        elif value <= VALUE_COMFORT_2 and self.additional_modes:
             return PRESET_COMFORT_2
-        elif value <= VALUE_COMFORT_1 and self.six_order:
+        elif value <= VALUE_COMFORT_1 and self.additional_modes:
             return PRESET_COMFORT_1
         else:
             return PRESET_COMFORT
@@ -191,9 +191,9 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             value = VALUE_FROST
         elif preset_mode == PRESET_ECO:
             value = VALUE_ECO
-        elif preset_mode == PRESET_COMFORT_2 and self.six_order:
+        elif preset_mode == PRESET_COMFORT_2 and self.additional_modes:
             value = VALUE_COMFORT_2
-        elif preset_mode == PRESET_COMFORT_1 and self.six_order:
+        elif preset_mode == PRESET_COMFORT_1 and self.additional_modes:
             value = VALUE_COMFORT_1
         elif preset_mode == PRESET_COMFORT:
             value = VALUE_COMFORT

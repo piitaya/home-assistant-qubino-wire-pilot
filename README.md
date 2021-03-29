@@ -28,17 +28,17 @@ The climate will have 2 modes :
   - `away` - mapped qubino "Frost protection" mode
 - `off` - mapped qubino "Off" mode :
 
-:warning: "Comfort -1" and "Comfort -2" are not available by default because home assistant doesn't have comfort-1 and comfort-2 preset. If you want to support these modes, add `6_order: true` in your configuration.
+:warning: "Comfort -1" and "Comfort -2" are not available by default because home assistant doesn't have comfort-1 and comfort-2 preset. If you want to support these modes, add `additional_modes: true` in your configuration.
 
 ## Configuration
 
-| Key        | Type    | Required | Description                                            |
-| :--------- | :------ | :------- | :----------------------------------------------------- |
-| `platform` | string  | yes      | Platform name                                          |
-| `name`     | string  | yes      | Name of the entity                                     |
-| `heater`   | string  | yes      | Light entity                                           |
-| `sensor`   | string  | no       | Temperature sensor (for display)                       |
-| `6_order`  | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset) |
+| Key                | Type    | Required | Description                                            |
+| :----------------- | :------ | :------- | :----------------------------------------------------- |
+| `platform`         | string  | yes      | Platform name                                          |
+| `name`             | string  | yes      | Name of the entity                                     |
+| `heater`           | string  | yes      | Light entity                                           |
+| `sensor`           | string  | no       | Temperature sensor (for display)                       |
+| `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset) |
 
 ## Example
 
@@ -56,7 +56,7 @@ climate:
   - platform: qubino_wire_pilot
     name: thermostat_living_room
     heater: light.heater_living_room_dimmer
-    6_order: true
+    additional_modes: true
 ```
 
 with optional sensor
