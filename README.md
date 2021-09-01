@@ -32,20 +32,22 @@ The climate will have 2 modes :
 
 ## Configuration
 
-| Key                | Type    | Required | Description                                            |
-| :----------------- | :------ | :------- | :----------------------------------------------------- |
-| `platform`         | string  | yes      | Platform name                                          |
-| `name`             | string  | yes      | Name of the entity                                     |
-| `heater`           | string  | yes      | Light entity                                           |
-| `sensor`           | string  | no       | Temperature sensor (for display)                       |
-| `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset) |
+| Key                | Type    | Required | Description                                                                                                                 |
+| :----------------- | :------ | :------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `platform`         | string  | yes      | Platform name                                                                                                               |
+| `heater`           | string  | yes      | Light entity                                                                                                                |
+| `sensor`           | string  | no       | Temperature sensor (for display)                                                                                            |
+| `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                      |
+| `name`             | string  | no       | Name to use in the frontend.                                                                                                |
+| `unique_id`        | string  | no       | An ID that uniquely identifies this cover group. If two climates have the same unique ID, Home Assistant will raise an error. |
+
+The unique id is recommended to allow icon, entity_id or name changes for the UI. 
 
 ## Example
 
 ```yaml
 climate:
   - platform: qubino_wire_pilot
-    name: thermostat_living_room
     heater: light.heater_living_room_dimmer
 ```
 
@@ -54,7 +56,6 @@ with 6 order
 ```yaml
 climate:
   - platform: qubino_wire_pilot
-    name: thermostat_living_room
     heater: light.heater_living_room_dimmer
     additional_modes: true
 ```
@@ -64,9 +65,15 @@ with optional sensor
 ```yaml
 climate:
   - platform: qubino_wire_pilot
-    name: thermostat_living_room
     heater: light.heater_living_room_dimmer
     sensor: sensor.temperature_living_room
+```
+
+```yaml
+climate:
+  - platform: qubino_wire_pilot
+    heater: light.heater_living_room_dimmer
+    unique_id: sensor.temperature_living_room
 ```
 
 ## Lovelace
