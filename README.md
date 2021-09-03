@@ -69,6 +69,8 @@ climate:
     sensor: sensor.temperature_living_room
 ```
 
+using unique_id
+
 ```yaml
 climate:
   - platform: qubino_wire_pilot
