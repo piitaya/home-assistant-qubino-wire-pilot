@@ -41,7 +41,7 @@ The climate will have 2 modes :
 | `name`             | string  | no       | Name to use in the frontend.                                                                                                |
 | `unique_id`        | string  | no       | An ID that uniquely identifies this cover group. If two climates have the same unique ID, Home Assistant will raise an error. |
 
-The unique id is recommended to allow icon, entity_id or name changes for the UI. 
+The unique id is recommended to allow icon, entity_id or name changes from the UI. 
 
 ## Example
 
