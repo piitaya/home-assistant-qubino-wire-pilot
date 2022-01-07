@@ -32,16 +32,16 @@ The climate will have 2 modes :
 
 ## Configuration
 
-| Key                | Type    | Required | Description                                                                                                                 |
-| :----------------- | :------ | :------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `platform`         | string  | yes      | Platform name                                                                                                               |
-| `heater`           | string  | yes      | Light entity                                                                                                                |
-| `sensor`           | string  | no       | Temperature sensor (for display)                                                                                            |
-| `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                      |
-| `name`             | string  | no       | Name to use in the frontend.                                                                                                |
-| `unique_id`        | string  | no       | An ID that uniquely identifies this cover group. If two climates have the same unique ID, Home Assistant will raise an error. |
+| Key                | Type    | Required | Description                                                                                                               |
+| :----------------- | :------ | :------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `platform`         | string  | yes      | Platform name                                                                                                             |
+| `heater`           | string  | yes      | Light entity                                                                                                              |
+| `sensor`           | string  | no       | Temperature sensor (for display)                                                                                          |
+| `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                    |
+| `name`             | string  | no       | Name to use in the frontend.                                                                                              |
+| `unique_id`        | string  | no       | An ID that uniquely identifies this climate. If two climates have the same unique ID, Home Assistant will raise an error. |
 
-The unique id is recommended to allow icon, entity_id or name changes from the UI. 
+The unique id is recommended to allow icon, entity_id or name changes from the UI.
 
 ## Example
 
@@ -69,13 +69,20 @@ climate:
     sensor: sensor.temperature_living_room
 ```
 
-using unique_id (This allow you to edit entity_id, name, icon from the UI)
+## Unique ID
+
+The `unique_id` is used to edit the entity from the GUI. It's automatically generated from heater entity_id. As the `unique_id` must be unique, you can not create 2 entities with the same heater.
+
+If you want to have 2 climate with the same heater, you must specify the `unique_id` in the config.
 
 ```yaml
 climate:
   - platform: qubino_wire_pilot
     heater: light.heater_living_room_dimmer
-    unique_id: qubino_thermostat
+    unique_id: qubino_heater_living_room_1
+  - platform: qubino_wire_pilot
+    heater: light.heater_living_room_dimmer
+    unique_id: qubino_heater_living_room_2
 ```
 
 ## Lovelace

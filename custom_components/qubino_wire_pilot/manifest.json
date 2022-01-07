@@ -5,6 +5,6 @@
   "issue_tracker": "https://github.com/piitaya/home-assitant-qubino_wire_pilot/issues",
   "requirements": [],
   "dependencies": [],
-  "version": "1.2.0",
+  "version": "2.0.0",
   "codeowners": ["@piitaya"]
 }

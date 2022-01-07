@@ -77,7 +77,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     additional_modes = config.get(CONF_ADDITIONAL_MODES)
 
     async_add_entities(
-        [QubinoWirePilotClimate(unique_id, name, heater_entity_id, sensor_entity_id, additional_modes)]
+        [QubinoWirePilotClimate(
+            unique_id, name, heater_entity_id, sensor_entity_id, additional_modes)]
     )
 
 
@@ -86,13 +87,13 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     def __init__(self, unique_id, name, heater_entity_id, sensor_entity_id, additional_modes):
         """Initialize the climate device."""
-        
+
         self.heater_entity_id = heater_entity_id
         self.sensor_entity_id = sensor_entity_id
         self.additional_modes = additional_modes
         self._cur_temperature = None
-        
-        self._attr_unique_id = unique_id
+
+        self._attr_unique_id = unique_id if unique_id else "qubino_wire_pilot_" + heater_entity_id
         self._attr_name = name
 
     async def async_added_to_hass(self):
@@ -118,7 +119,8 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
             self.async_schedule_update_ha_state()
 
-        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_START, _async_startup)
+        self.hass.bus.async_listen_once(
+            EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
     def supported_features(self):
@@ -195,7 +197,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             value = VALUE_COMFORT_1
         elif preset_mode == PRESET_COMFORT:
             value = VALUE_COMFORT
-       
+
         await self._async_set_heater_value(value)
 
     # Modes
