@@ -38,7 +38,8 @@ The climate will have 2 modes :
 | `heater`           | string  | yes      | Light entity                                                                                                                |
 | `sensor`           | string  | no       | Temperature sensor (for display)                                                                                            |
 | `additional_modes` | boolean | no       | 6-order support (add Comfort -1 and Comfort -2 preset)                                                                      |
-| `name`             | string  | no       | Name to use in the frontend.                                                                                                |
+| `name`             | string  | no       | Name to use in the frontend. Defaults to "Qubino Thermostat"                                                                |
+| `entity_id`        | string  | no       | entity_id to use in the frontend. Must be in the form "climate.<lowercase alphanumeric string>". Derived from name if not provided. |
 | `unique_id`        | string  | no       | An ID that uniquely identifies this cover group. If two climates have the same unique ID, Home Assistant will raise an error. |
 
 The unique id is recommended to allow icon, entity_id or name changes from the UI. 

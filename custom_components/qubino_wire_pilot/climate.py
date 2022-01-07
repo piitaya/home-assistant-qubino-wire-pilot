@@ -23,6 +23,7 @@ from homeassistant.components.climate.const import (
 from homeassistant.const import (
     TEMP_CELSIUS,
     CONF_NAME,
+    CONF_ENTITY_ID,
     CONF_UNIQUE_ID,
     EVENT_HOMEASSISTANT_START,
     ATTR_ENTITY_ID,
@@ -61,6 +62,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_SENSOR): cv.entity_id,
         vol.Optional(CONF_ADDITIONAL_MODES, default=False): cv.boolean,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+        vol.Optional(CONF_ENTITY_ID): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
     }
 )
@@ -72,28 +74,29 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     """Set up the wire pilot climate platform."""
     unique_id = config.get(CONF_UNIQUE_ID)
     name = config.get(CONF_NAME)
+    entity_id = config.get(CONF_ENTITY_ID)
     heater_entity_id = config.get(CONF_HEATER)
     sensor_entity_id = config.get(CONF_SENSOR)
     additional_modes = config.get(CONF_ADDITIONAL_MODES)
 
     async_add_entities(
-        [QubinoWirePilotClimate(unique_id, name, heater_entity_id, sensor_entity_id, additional_modes)]
+        [QubinoWirePilotClimate(unique_id, name, entity_id, heater_entity_id, sensor_entity_id, additional_modes)]
     )
 
 
 class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     """Representation of a Qubino Wire Pilot device."""
 
-    def __init__(self, unique_id, name, heater_entity_id, sensor_entity_id, additional_modes):
+    def __init__(self, unique_id, name, entity_id, heater_entity_id, sensor_entity_id, additional_modes):
         """Initialize the climate device."""
         
         self.heater_entity_id = heater_entity_id
         self.sensor_entity_id = sensor_entity_id
         self.additional_modes = additional_modes
         self._cur_temperature = None
-        
         self._attr_unique_id = unique_id
         self._attr_name = name
+        self.entity_id = entity_id
 
     async def async_added_to_hass(self):
         """Run when entity about to be added."""
