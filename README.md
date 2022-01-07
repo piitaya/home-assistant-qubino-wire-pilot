@@ -69,7 +69,7 @@ climate:
     sensor: sensor.temperature_living_room
 ```
 
-using unique_id
+using unique_id (This allow you to edit entity_id, name, icon from the UI)
 
 ```yaml
 climate:
