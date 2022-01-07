@@ -75,7 +75,7 @@ using unique_id
 climate:
   - platform: qubino_wire_pilot
     heater: light.heater_living_room_dimmer
-    unique_id: sensor.temperature_living_room
+    unique_id: qubino_thermostat
 ```
 
 ## Lovelace
