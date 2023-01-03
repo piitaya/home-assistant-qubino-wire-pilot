@@ -1,10 +1,10 @@
 {
   "domain": "qubino_wire_pilot",
-  "name": "Qubino wire pilot",
-  "documentation": "https://github.com/piitaya/home-assitant-qubino_wire_pilot",
-  "issue_tracker": "https://github.com/piitaya/home-assitant-qubino_wire_pilot/issues",
+  "name": "Qubino wire pilot (fixed)",
+  "documentation": "https://github.com/dx44/home-assitant-qubino_wire_pilot",
+  "issue_tracker": "https://github.com/dx44/home-assitant-qubino_wire_pilot/issues",
   "requirements": [],
   "dependencies": [],
-  "version": "2.0.0",
-  "codeowners": ["@piitaya"]
+  "version": "2.0.1",
+  "codeowners": ["@piitaya","dx44"]
 }
