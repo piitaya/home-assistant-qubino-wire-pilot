@@ -1,6 +1,6 @@
 {
   "domains": ["climate"],
-  "name": "Qubino Wire Pilot",
+  "name": "Qubino Wire Pilot (fork)",
   "render_readme": true,
   "homeassistant": "0.96.0"
 }
