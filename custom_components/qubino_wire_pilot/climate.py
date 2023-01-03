@@ -1,18 +1,16 @@
-"""Platform for Roth Touchline heat pump controller."""
+"""Platform for Qubino Wire Pilot."""
 import logging
 
 from typing import List
 
 import voluptuous as vol
 
-from homeassistant.components.climate import PLATFORM_SCHEMA
-try:
-    from homeassistant.components.climate import ClimateEntity
-except ImportError:
-    from homeassistant.components.climate import ClimateDevice as ClimateEntity
-
+from homeassistant.components.climate import (
+    PLATFORM_SCHEMA,
+    ClimateEntity,
+    ClimateEntityFeature
+)
 from homeassistant.components.climate.const import (
-    SUPPORT_PRESET_MODE,
     HVAC_MODE_OFF,
     HVAC_MODE_HEAT,
     PRESET_ECO,
@@ -27,7 +25,7 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_START,
     ATTR_ENTITY_ID,
     STATE_UNKNOWN,
-    STATE_UNAVAILABLE,
+    STATE_UNAVAILABLE
 )
 from homeassistant.core import callback
 
@@ -64,8 +62,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_UNIQUE_ID): cv.string,
     }
 )
-
-SUPPORT_FLAGS = SUPPORT_PRESET_MODE
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -123,9 +119,9 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
-    def supported_features(self):
+    def supported_features(self) -> ClimateEntityFeature:
         """Return the list of supported features."""
-        return SUPPORT_FLAGS
+        return ClimateEntityFeature.PRESET_MODE
 
     def update(self):
         """Update unit attributes."""
