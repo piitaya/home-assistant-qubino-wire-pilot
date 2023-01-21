@@ -17,6 +17,7 @@ from homeassistant.components.climate.const import (
     PRESET_COMFORT,
     PRESET_AWAY,
     PRESET_NONE,
+    HVACMode
 )
 from homeassistant.const import (
     TEMP_CELSIUS,
