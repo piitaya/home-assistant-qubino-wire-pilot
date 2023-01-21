@@ -5,6 +5,6 @@
   "issue_tracker": "https://github.com/dx44/home-assitant-qubino_wire_pilot/issues",
   "requirements": [],
   "dependencies": [],
-  "version": "2.0.1",
+  "version": "2.0.4",
   "codeowners": ["@piitaya","@dx44"]
 }
