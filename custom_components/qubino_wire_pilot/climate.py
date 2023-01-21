@@ -25,6 +25,7 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_START,
     ATTR_ENTITY_ID,
     STATE_UNKNOWN,
+    STATE_OFF,
     STATE_UNAVAILABLE
 )
 from homeassistant.core import callback
@@ -128,17 +129,18 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Temperature
     @property
-    def temperature_unit(self):
+    def temperature_unit(self) -> str:
         """Return the unit of measurement."""
         return TEMP_CELSIUS
 
     @property
-    def current_temperature(self):
+    def current_temperature(self) -> float | None:
         """Return the sensor temperature."""
         return self._cur_temperature
 
     @property
-    def heater_value(self):
+    def heater_value(self) -> int | None:
+        """Return entity brightness"""
         state = self.hass.states.get(self.heater_entity_id)
 
         if state is None:
@@ -154,7 +156,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Presets
     @property
-    def preset_modes(self):
+    def preset_mode(self) -> str | None:
         """List of available preset modes."""
         if self.additional_modes:
             return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]
@@ -162,11 +164,11 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
 
     @property
-    def preset_mode(self):
+    def preset_modes(self) -> list[str] | None:
         value = self.heater_value
 
         if value is None:
-            return STATE_UNKNOWN
+            return None
         if value <= VALUE_OFF:
             return PRESET_NONE
         elif value <= VALUE_FROST:
@@ -180,7 +182,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         else:
             return PRESET_COMFORT
 
-    async def async_set_preset_mode(self, preset_mode):
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
 
         if preset_mode == PRESET_AWAY:
@@ -198,11 +200,11 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Modes
     @property
-    def hvac_modes(self):
+    def hvac_modes(self) -> list[HVACMode] | list[str]:
         """List of available operation modes."""
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
-    async def async_set_hvac_mode(self, hvac_mode):
+    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         value = VALUE_FROST
 
         if hvac_mode == HVAC_MODE_HEAT:
@@ -213,23 +215,23 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         await self._async_set_heater_value(value)
 
     @property
-    def hvac_mode(self):
+    def hvac_mode(self) -> HVACMode | str | None:
         value = self.heater_value
 
         if value is None:
-            return STATE_UNKNOWN
+            return None
         if value <= VALUE_OFF:
             return HVAC_MODE_OFF
         else:
             return HVAC_MODE_HEAT
 
     @callback
-    def _async_heater_changed(self, entity_id, old_state, new_state):
+    def _async_heater_changed(self, entity_id, old_state, new_state) -> None:
         if new_state is None:
             return
         self.async_schedule_update_ha_state()
 
-    async def _async_temperature_changed(self, entity_id, old_state, new_state):
+    async def _async_temperature_changed(self, entity_id, old_state, new_state) -> None:
         if new_state is None:
             return
         self._async_update_temperature(new_state)
