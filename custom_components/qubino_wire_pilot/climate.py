@@ -157,7 +157,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Presets
     @property
-    def preset_mode(self) -> str | None:
+    def preset_modes(self) -> list[str] | None:
         """List of available preset modes."""
         if self.additional_modes:
             return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]
@@ -165,7 +165,10 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
 
     @property
-    def preset_modes(self) -> list[str] | None:
+    def preset_mode(self) -> str | None:
+        """Return the current preset mode, e.g., home, away, temp.
+        Requires ClimateEntityFeature.PRESET_MODE.
+        """
         value = self.heater_value
 
         if value is None:
