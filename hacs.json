@@ -1,6 +1,5 @@
 {
-  "domains": ["climate"],
   "name": "Qubino Wire Pilot",
   "render_readme": true,
-  "homeassistant": "0.96.0"
+  "homeassistant": "2023.1.0"
 }
