@@ -1,6 +1,5 @@
 {
-  "name": "Qubino Wire Pilot (fixed)",
-  "country": false,
+  "name": "Qubino Wire Pilot",
   "render_readme": true,
   "homeassistant": "2023.1.0"
 }

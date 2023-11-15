@@ -11,8 +11,6 @@ from homeassistant.components.climate import (
     ClimateEntityFeature
 )
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF,
-    HVAC_MODE_HEAT,
     PRESET_ECO,
     PRESET_COMFORT,
     PRESET_AWAY,
@@ -160,15 +158,12 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     def preset_modes(self) -> list[str] | None:
         """List of available preset modes."""
         if self.additional_modes:
-            return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY]
+            return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
         else:
-            return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
+            return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
 
     @property
     def preset_mode(self) -> str | None:
-        """Return the current preset mode, e.g., home, away, temp.
-        Requires ClimateEntityFeature.PRESET_MODE.
-        """
         value = self.heater_value
 
         if value is None:
@@ -204,16 +199,16 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Modes
     @property
-    def hvac_modes(self) -> list[HVACMode] | list[str]:
+    def hvac_modes(self) -> list[HVACMode]:
         """List of available operation modes."""
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        return [HVACMode.HEAT, HVACMode.OFF]
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         value = VALUE_FROST
 
-        if hvac_mode == HVAC_MODE_HEAT:
+        if hvac_mode == HVACMode.HEAT:
             value = VALUE_COMFORT
-        elif hvac_mode == HVAC_MODE_OFF:
+        elif hvac_mode == HVACMode.OFF:
             value = VALUE_OFF
 
         await self._async_set_heater_value(value)
@@ -225,9 +220,9 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         if value is None:
             return None
         if value <= VALUE_OFF:
-            return HVAC_MODE_OFF
+            return HVACMode.OFF
         else:
-            return HVAC_MODE_HEAT
+            return HVACMode.HEAT
 
     @callback
     def _async_heater_changed(self, entity_id, old_state, new_state) -> None:
