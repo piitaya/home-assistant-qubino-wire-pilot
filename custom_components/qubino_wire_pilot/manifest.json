@@ -1,10 +1,12 @@
 {
   "domain": "qubino_wire_pilot",
   "name": "Qubino wire pilot",
+  "codeowners": ["@piitaya", "@dx44"],
+  "dependencies": ["light", "sensor"],
+  "integration_type": "helper",
   "documentation": "https://github.com/piitaya/home-assistant-qubino-wire-pilot",
   "issue_tracker": "https://github.com/piitaya/home-assistant-qubino-wire-pilot/issues",
   "requirements": [],
-  "dependencies": [],
   "version": "2.0.1",
-  "codeowners": ["@piitaya","@dx44"]
+  "iot_class": "local_polling"
 }
