@@ -1,39 +1,38 @@
 """Platform for Qubino Wire Pilot."""
 import logging
 
-from typing import List
-
 import voluptuous as vol
 
 from homeassistant.components.climate import (
     PLATFORM_SCHEMA,
-    ClimateEntity,
-    ClimateEntityFeature
-)
-from homeassistant.components.climate.const import (
-    PRESET_ECO,
-    PRESET_COMFORT,
     PRESET_AWAY,
+    PRESET_COMFORT,
+    PRESET_ECO,
     PRESET_NONE,
-    HVACMode
+    ClimateEntity,
+    ClimateEntityFeature,
+    HVACMode,
+)
+from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
+    DOMAIN as LIGHT_DOMAIN,
+    SERVICE_TURN_ON as LIGHT_SERVICE_TURN_ON,
 )
 from homeassistant.const import (
-    TEMP_CELSIUS,
+    ATTR_ENTITY_ID,
     CONF_NAME,
     CONF_UNIQUE_ID,
     EVENT_HOMEASSISTANT_START,
-    ATTR_ENTITY_ID,
+    STATE_UNAVAILABLE,
     STATE_UNKNOWN,
-    STATE_OFF,
-    STATE_UNAVAILABLE
+    UnitOfTemperature,
 )
-from homeassistant.core import callback
-
-import homeassistant.components.light as light
+from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change
-
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +63,12 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType | None = None,
+) -> None:
     """Set up the wire pilot climate platform."""
     unique_id = config.get(CONF_UNIQUE_ID)
     name = config.get(CONF_NAME)
@@ -73,15 +77,20 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     additional_modes = config.get(CONF_ADDITIONAL_MODES)
 
     async_add_entities(
-        [QubinoWirePilotClimate(
-            unique_id, name, heater_entity_id, sensor_entity_id, additional_modes)]
+        [
+            QubinoWirePilotClimate(
+                unique_id, name, heater_entity_id, sensor_entity_id, additional_modes
+            )
+        ]
     )
 
 
 class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     """Representation of a Qubino Wire Pilot device."""
 
-    def __init__(self, unique_id, name, heater_entity_id, sensor_entity_id, additional_modes):
+    def __init__(
+        self, unique_id, name, heater_entity_id, sensor_entity_id, additional_modes
+    ) -> None:
         """Initialize the climate device."""
 
         self.heater_entity_id = heater_entity_id
@@ -89,10 +98,12 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         self.additional_modes = additional_modes
         self._cur_temperature = None
 
-        self._attr_unique_id = unique_id if unique_id else "qubino_wire_pilot_" + heater_entity_id
+        self._attr_unique_id = (
+            unique_id if unique_id else "qubino_wire_pilot_" + heater_entity_id
+        )
         self._attr_name = name
 
-    async def async_added_to_hass(self):
+    async def async_added_to_hass(self) -> None:
         """Run when entity about to be added."""
         await super().async_added_to_hass()
 
@@ -115,22 +126,21 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
             self.async_schedule_update_ha_state()
 
-        self.hass.bus.async_listen_once(
-            EVENT_HOMEASSISTANT_START, _async_startup)
+        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
     def supported_features(self) -> ClimateEntityFeature:
         """Return the list of supported features."""
         return ClimateEntityFeature.PRESET_MODE
 
-    def update(self):
+    def update(self) -> None:
         """Update unit attributes."""
 
     # Temperature
     @property
     def temperature_unit(self) -> str:
         """Return the unit of measurement."""
-        return TEMP_CELSIUS
+        return UnitOfTemperature.CELSIUS
 
     @property
     def current_temperature(self) -> float | None:
@@ -139,14 +149,14 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     @property
     def heater_value(self) -> int | None:
-        """Return entity brightness"""
+        """Return entity brightness."""
         state = self.hass.states.get(self.heater_entity_id)
 
         if state is None:
             return
 
-        brightness = state.attributes.get(light.ATTR_BRIGHTNESS)
-        if brightness == None:
+        brightness = state.attributes.get(ATTR_BRIGHTNESS)
+        if brightness is None:
             brightness = 0
         else:
             brightness = round(brightness / 255 * 99, 0)
@@ -158,12 +168,20 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     def preset_modes(self) -> list[str] | None:
         """List of available preset modes."""
         if self.additional_modes:
-            return [PRESET_COMFORT, PRESET_COMFORT_1, PRESET_COMFORT_2, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
+            return [
+                PRESET_COMFORT,
+                PRESET_COMFORT_1,
+                PRESET_COMFORT_2,
+                PRESET_ECO,
+                PRESET_AWAY,
+                PRESET_NONE,
+            ]
         else:
             return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, PRESET_NONE]
 
     @property
     def preset_mode(self) -> str | None:
+        """Preset current mode."""
         value = self.heater_value
 
         if value is None:
@@ -182,6 +200,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             return PRESET_COMFORT
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
+        """Set preset mode."""
         value = VALUE_OFF
 
         if preset_mode == PRESET_AWAY:
@@ -204,6 +223,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         return [HVACMode.HEAT, HVACMode.OFF]
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
+        """Set new target hvac mode."""
         value = VALUE_FROST
 
         if hvac_mode == HVACMode.HEAT:
@@ -214,7 +234,8 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         await self._async_set_heater_value(value)
 
     @property
-    def hvac_mode(self) -> HVACMode | str | None:
+    def hvac_mode(self) -> HVACMode | None:
+        """Return hvac operation ie. heat, off mode."""
         value = self.heater_value
 
         if value is None:
@@ -239,7 +260,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     @callback
     def _async_update_temperature(self, state):
         try:
-            if (state.state != STATE_UNAVAILABLE):
+            if state.state != STATE_UNAVAILABLE:
                 self._cur_temperature = float(state.state)
         except ValueError as ex:
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
@@ -248,7 +269,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         """Turn heater toggleable device on."""
         data = {
             ATTR_ENTITY_ID: self.heater_entity_id,
-            light.ATTR_BRIGHTNESS: value * 255 / 99,
+            ATTR_BRIGHTNESS: value * 255 / 99,
         }
 
-        await self.hass.services.async_call(light.DOMAIN, light.SERVICE_TURN_ON, data)
+        await self.hass.services.async_call(LIGHT_DOMAIN, LIGHT_SERVICE_TURN_ON, data)
