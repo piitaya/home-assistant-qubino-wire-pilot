@@ -121,7 +121,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             """Init on startup."""
             if self.sensor_entity_id is not None:
                 sensor_state = self.hass.states.get(self.sensor_entity_id)
-                if sensor_state and sensor_state.state != STATE_UNKNOWN:
+                if sensor_state:
                     self._async_update_temperature(sensor_state)
 
             self.async_schedule_update_ha_state()
@@ -260,8 +260,10 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     @callback
     def _async_update_temperature(self, state):
         try:
-            if state.state != STATE_UNAVAILABLE:
+            if state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
                 self._cur_temperature = float(state.state)
+            else:
+                self._cur_temperature = None
         except ValueError as ex:
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
 
