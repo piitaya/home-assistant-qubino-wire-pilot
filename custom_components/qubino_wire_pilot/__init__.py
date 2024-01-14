@@ -1,1 +1,1 @@
-"""Qubino wire pilot platform configuration"""
+"""Qubino wire pilot platform configuration."""
