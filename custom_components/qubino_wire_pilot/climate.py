@@ -255,7 +255,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         if new_state is None:
             return
         self._async_update_temperature(new_state)
-        await self.async_write_ha_state()
+        self.async_write_ha_state()
 
     @callback
     def _async_update_temperature(self, state):
