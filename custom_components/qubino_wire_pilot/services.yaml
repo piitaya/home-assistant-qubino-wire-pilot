@@ -1,0 +1,45 @@
+set_mode_qubino_wp:
+  name: Set heating mode (Qubino)
+  description: Change the heating mode
+  target:
+    entity:
+      integration: qubino_wire_pilot
+  fields:
+    preset_mode:
+      name: Mode
+      description: Mode name
+      required: true
+      advanced: false
+      default: "off"
+      example: "comfort"
+      selector:
+        select:
+          options:
+            - "off"
+            - "away"
+            - "eco"
+            - "comfort"
+
+set_mode_qubino_wp_additional_modes:
+  name: Set heating mode (Qubino)
+  description: Change the heating mode
+  target:
+    entity:
+      integration: qubino_wire_pilot
+  fields:
+    preset_mode:
+      name: Mode
+      description: Mode name
+      required: true
+      advanced: false
+      default: "off"
+      example: "comfort"
+      selector:
+        select:
+          options:
+            - "off"
+            - "away"
+            - "eco"
+            - "comfort-2"
+            - "comfort-1"
+            - "comfort"

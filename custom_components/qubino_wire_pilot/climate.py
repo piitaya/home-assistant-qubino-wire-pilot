@@ -29,6 +29,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import entity_platform, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -62,6 +63,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
+SERVICE_SET_MODE_QUBINO_FP = "set_mode_qubino_wp"
+SERVICE_SET_MODE_QUBINO_FP_ADD_MODES = "set_mode_qubino_wp_additional_modes"
 
 async def async_setup_platform(
     hass: HomeAssistant,
@@ -83,6 +86,21 @@ async def async_setup_platform(
             )
         ]
     )
+
+    platform = entity_platform.async_get_current_platform()
+    modes = [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY, HVACMode.OFF]
+    service = SERVICE_SET_MODE_QUBINO_FP
+    if additional_modes:
+        modes.append(PRESET_COMFORT_1)
+        modes.append(PRESET_COMFORT_2)
+        service = SERVICE_SET_MODE_QUBINO_FP_ADD_MODES
+
+    platform.async_register_entity_service(
+        service,
+        {
+            vol.Required("preset_mode"): vol.In(modes)
+        },
+        "async_set_preset_mode")
 
 
 class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
