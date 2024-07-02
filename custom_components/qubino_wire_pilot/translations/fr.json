@@ -23,11 +23,13 @@
       "init": {
         "data": {
           "heater": "Lumière",
-          "sensor": "Capteur de température"
+          "sensor": "Capteur de température",
+          "additional_modes": "Modes supplémentaires"
         },
         "data_description": {
           "heater": "Entité lumière utilisée pour contrôler le chauffage .",
-          "sensor": "Capteur de température qui reflète la température actuelle."
+          "sensor": "Capteur de température qui reflète la température actuelle.",
+          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
         }
       }
     }

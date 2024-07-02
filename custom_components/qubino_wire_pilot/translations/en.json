@@ -3,19 +3,18 @@
   "config": {
     "step": {
       "user": {
+        "title": "Add Qubino wire pilot thermostat",
+        "description": "Create a climate entity that controls the temperature via a switch and sensor.",
         "data": {
-          "additional_modes": "Additional modes",
           "heater": "Light",
-          "name": "Name",
-          "sensor": "Temperature sensor"
+          "sensor": "Temperature sensor",
+          "additional_modes": "Additional modes"
         },
         "data_description": {
-          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C).",
           "heater": "Light entity used to control the heating.",
-          "sensor": "Temperature sensor that reflect the current temperature."
-        },
-        "description": "Create a climate entity that controls the temperature via a switch and sensor.",
-        "title": "Add Qubino wire pilot thermostat"
+          "sensor": "Temperature sensor that reflect the current temperature.",
+          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+        }
       }
     }
   },
@@ -23,22 +22,22 @@
     "step": {
       "init": {
         "data": {
-          "additional_modes": "Additional modes",
           "heater": "Light",
-          "sensor": "Temperature sensor"
+          "sensor": "Temperature sensor",
+          "additional_modes": "Additional modes"
         },
         "data_description": {
-          "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C).",
           "heater": "Light entity used to control the heating.",
-          "sensor": "Temperature sensor that reflect the current temperature."
+          "sensor": "Temperature sensor that reflect the current temperature.",
+          "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C)."
         }
       }
     }
   },
   "services": {
     "reload": {
-      "description": "Reloads qubino wire pilot thermostats from the YAML-configuration.",
-      "name": "Reload"
+      "name": "Reload",
+      "description": "Reloads qubino wire pilot thermostats from the YAML-configuration."
     }
   },
   "entity": {
