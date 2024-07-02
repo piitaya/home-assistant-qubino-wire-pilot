@@ -32,6 +32,9 @@ The climate will have 2 modes :
 
 ## Configuration
 
+You can convert the `light` to a `climate` entity by searching "Qubino Wire Pilot" in the integration page or helper page.
+You can also setup the integration using `YAML.
+
 | Key                | Type    | Required | Description                                                                                                               |
 | :----------------- | :------ | :------- | :------------------------------------------------------------------------------------------------------------------------ |
 | `platform`         | string  | yes      | Platform name                                                                                                             |
