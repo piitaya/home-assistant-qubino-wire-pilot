@@ -1,0 +1,20 @@
+{
+  "entity": {
+    "climate": {
+      "qubino_wire_pilot": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "comfort-1": "mdi:numeric-1-circle",
+              "comfort-2": "mdi:numeric-2-circle",
+              "none": "mdi:power"
+            }
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "reload": "mdi:reload"
+  }
+}

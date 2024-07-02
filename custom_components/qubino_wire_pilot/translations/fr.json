@@ -1,0 +1,56 @@
+{
+  "title": "Thermostat Qubino fil pilote",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ajouter un thermostat Qubino fil pilote",
+        "description": "Créer un entité thermostat à partir d'une entité lumière Qubino.",
+        "data": {
+          "heater": "Lumière",
+          "sensor": "Capteur de température",
+          "additional_modes": "Modes supplémentaires"
+        },
+        "data_description": {
+          "heater": "Entité lumière utilisée pour contrôler le chauffage .",
+          "sensor": "Capteur de température qui reflète la température actuelle.",
+          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "heater": "Lumière",
+          "sensor": "Capteur de température"
+        },
+        "data_description": {
+          "heater": "Entité lumière utilisée pour contrôler le chauffage .",
+          "sensor": "Capteur de température qui reflète la température actuelle."
+        }
+      }
+    }
+  },
+  "services": {
+    "reload": {
+      "name": "Recharger",
+      "description": "Recharge la configuration YAML de l'intégration Qubino fil pilote."
+    }
+  },
+  "entity": {
+    "climate": {
+      "qubino_wire_pilot": {
+        "name": "Thermostat",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "comfort-1": "Confort -1 \u00b0C",
+              "comfort-2": "Confort -2 \u00b0C"
+            }
+          }
+        }
+      }
+    }
+  }
+}
