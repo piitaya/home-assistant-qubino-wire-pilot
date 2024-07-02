@@ -1,0 +1,58 @@
+{
+  "title": "Qubino wire pilot thermostat",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Qubino wire pilot thermostat",
+        "description": "Create a climate entity that controls the temperature via a switch and sensor.",
+        "data": {
+          "heater": "Light",
+          "sensor": "Temperature sensor",
+          "additional_modes": "Additional modes"
+        },
+        "data_description": {
+          "heater": "Light entity used to control the heating.",
+          "sensor": "Temperature sensor that reflect the current temperature.",
+          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "heater": "Light",
+          "sensor": "Temperature sensor",
+          "additional_modes": "Additional modes"
+        },
+        "data_description": {
+          "heater": "Light entity used to control the heating.",
+          "sensor": "Temperature sensor that reflect the current temperature.",
+          "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C)."
+        }
+      }
+    }
+  },
+  "services": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads qubino wire pilot thermostats from the YAML-configuration."
+    }
+  },
+  "entity": {
+    "climate": {
+      "qubino_wire_pilot": {
+        "name": "Thermostat",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "comfort-1": "Comfort -1 \u00b0C",
+              "comfort-2": "Comfort -2 \u00b0C"
+            }
+          }
+        }
+      }
+    }
+  }
+}
