@@ -185,11 +185,13 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         await super().async_added_to_hass()
 
         # Add listener
-        self.async_on_remove(
-            async_track_state_change_event(
-                self.hass, [self.sensor_entity_id], self._async_sensor_changed
+        if self.sensor_entity_id is not None:
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass, [self.sensor_entity_id], self._async_sensor_changed
+                )
             )
-        )
+
         self.async_on_remove(
             async_track_state_change_event(
                 self.hass, [self.heater_entity_id], self._async_heater_changed
@@ -199,13 +201,14 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         @callback
         def _async_startup(_: Event | None = None) -> None:
             """Init on startup."""
-            sensor_state = self.hass.states.get(self.sensor_entity_id)
-            if sensor_state and sensor_state.state not in (
-                STATE_UNAVAILABLE,
-                STATE_UNKNOWN,
-            ):
-                self._async_update_temp(sensor_state)
-                self.async_write_ha_state()
+            if self.sensor_entity_id is not None:
+                sensor_state = self.hass.states.get(self.sensor_entity_id)
+                if sensor_state and sensor_state.state not in (
+                    STATE_UNAVAILABLE,
+                    STATE_UNKNOWN,
+                ):
+                    self._async_update_temp(sensor_state)
+                    self.async_write_ha_state()
 
         if self.hass.state is CoreState.running:
             _async_startup()
