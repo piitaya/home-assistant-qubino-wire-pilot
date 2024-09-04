@@ -1,4 +1,4 @@
-# home-assistant-qubino-wire-pilot
+# Home Assistant Component for Qubino Wire Pilot
 
 Home Assistant Component for Qubino Wire Pilot
 
@@ -6,8 +6,9 @@ Home Assistant Component for Qubino Wire Pilot
 
 ## Introduction
 
-The Qubino ZMNHJD1 is not recognized as a thermostat in Home Assistant but as a light.
-The light percentage is mapped to a mode.
+The Qubino ZMNHJD1 is not recognized as a thermostat in Home Assistant but as a light. 
+
+The brightness percentage of the light entity is mapped to a mode.
 
 | Value            | Min | Max  |
 | :--------------- | :-- | :--- |
@@ -18,7 +19,7 @@ The light percentage is mapped to a mode.
 | Comfort -1       | 41% | 50%  |
 | Comfort          | 51% | 100% |
 
-This component create a `climate` entity using the `light` entity.
+This integrtion create an `climate` entity using the `light` entity for easy control of your heater.
 
 The climate will have 2 modes :
 
