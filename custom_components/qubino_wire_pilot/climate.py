@@ -26,8 +26,6 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_UNIQUE_ID,
     EVENT_HOMEASSISTANT_START,
-    SERVICE_TURN_OFF,
-    SERVICE_TURN_ON,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
     UnitOfTemperature,
@@ -362,7 +360,7 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             cur_temp = float(state.state)
             if not math.isfinite(cur_temp):
                 raise ValueError(f"Sensor has illegal state {state.state}")
-            self._cur_temp = cur_temp
+            self._cur_temperature = cur_temp
         except ValueError as ex:
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
 
