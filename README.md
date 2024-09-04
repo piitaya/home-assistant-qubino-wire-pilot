@@ -2,6 +2,8 @@
 
 Home Assistant Component for Qubino Wire Pilot
 
+![CleanShot 2024-09-04 at 12 36 52](https://github.com/user-attachments/assets/0b2f4bc7-35c6-43e4-9050-02696c9f1b9f)
+
 ## Introduction
 
 The Qubino ZMNHJD1 is not recognized as a thermostat in Home Assistant but as a light.
