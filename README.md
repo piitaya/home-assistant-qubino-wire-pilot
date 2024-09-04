@@ -33,10 +33,13 @@ The climate will have 2 modes :
 
 :warning: "Comfort -1" and "Comfort -2" are not available by default because home assistant doesn't have comfort-1 and comfort-2 preset. If you want to support these modes, add `additional_modes: true` in your configuration.
 
-## Configuration
+## Installation
 
 You can convert the `light` to a `climate` entity by searching "Qubino Wire Pilot" in the integration page or helper page.
-You can also setup the integration using `YAML.
+
+## YAML configuration
+
+If you prefer to use `yaml`, you can, but it's not recommended as more and more integrations are moved to the UI. All the options are available in the UI.
 
 | Key                | Type    | Required | Description                                                                                                               |
 | :----------------- | :------ | :------- | :------------------------------------------------------------------------------------------------------------------------ |
@@ -49,7 +52,7 @@ You can also setup the integration using `YAML.
 
 The unique id is recommended to allow icon, entity_id or name changes from the UI.
 
-## Example
+### Example
 
 ```yaml
 climate:
@@ -75,7 +78,7 @@ climate:
     sensor: sensor.temperature_living_room
 ```
 
-## Unique ID
+### Unique ID
 
 The `unique_id` is used to edit the entity from the GUI. It's automatically generated from heater entity_id. As the `unique_id` must be unique, you can not create 2 entities with the same heater.
 
