@@ -9,7 +9,7 @@ from homeassistant.helpers.device import (
 
 CONF_HEATER = "heater"
 DOMAIN = "qubino_wire_pilot"
-PLATFORMS = [Platform.CLIMATE]
+PLATFORMS = [Platform.CLIMATE, Platform.SELECT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

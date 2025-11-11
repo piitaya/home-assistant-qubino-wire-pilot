@@ -53,6 +53,19 @@
           }
         }
       }
+    },
+    "select": {
+      "qubino_wire_pilot_mode": {
+        "name": "Wire pilot mode",
+        "state": {
+          "Off": "Off",
+          "FrostProtection": "Frost protection",
+          "Eco": "Eco",
+          "ComfortMinus2": "Comfort -2 \u00b0C",
+          "ComfortMinus1": "Comfort -1 \u00b0C",
+          "Comfort": "Comfort"
+        }
+      }
     }
   }
 }
