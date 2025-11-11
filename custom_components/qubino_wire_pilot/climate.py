@@ -80,18 +80,18 @@ SELECT_OPTION_COMFORT_MINUS_2 = "ComfortMinus2"
 SELECT_OPTION_COMFORT_MINUS_1 = "ComfortMinus1"
 SELECT_OPTION_COMFORT = "Comfort"
 
-# Mapping from select options to brightness values
-SELECT_OPTION_TO_VALUE = {
-    SELECT_OPTION_OFF: VALUE_OFF,
-    SELECT_OPTION_FROST_PROTECTION: VALUE_FROST,
-    SELECT_OPTION_ECO: VALUE_ECO,
-    SELECT_OPTION_COMFORT_MINUS_2: VALUE_COMFORT_2,
-    SELECT_OPTION_COMFORT_MINUS_1: VALUE_COMFORT_1,
-    SELECT_OPTION_COMFORT: VALUE_COMFORT,
+# Direct mapping from select options to climate presets
+SELECT_OPTION_TO_PRESET = {
+    SELECT_OPTION_OFF: PRESET_NONE,
+    SELECT_OPTION_FROST_PROTECTION: PRESET_AWAY,
+    SELECT_OPTION_ECO: PRESET_ECO,
+    SELECT_OPTION_COMFORT_MINUS_2: PRESET_COMFORT_2,
+    SELECT_OPTION_COMFORT_MINUS_1: PRESET_COMFORT_1,
+    SELECT_OPTION_COMFORT: PRESET_COMFORT,
 }
 
-# Mapping from brightness values to select options
-VALUE_TO_SELECT_OPTION = {v: k for k, v in SELECT_OPTION_TO_VALUE.items()}
+# Direct mapping from climate presets to select options
+PRESET_TO_SELECT_OPTION = {v: k for k, v in SELECT_OPTION_TO_PRESET.items()}
 
 PLATFORM_SCHEMA_COMMON = vol.Schema(
     {
@@ -272,43 +272,29 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     @property
     def heater_value(self) -> int | None:
-        """Return entity value (brightness for light, mapped value for select)."""
+        """Return brightness value for light entities only."""
         state = self.hass.states.get(self.heater_entity_id)
 
-        if state is None:
+        if state is None or state.domain != LIGHT_DOMAIN:
             return None
 
-        domain = state.domain
-
-        if domain == LIGHT_DOMAIN:
-            # Read brightness from light entity
-            brightness = state.attributes.get(ATTR_BRIGHTNESS)
-            if brightness is None:
-                brightness = 0
-            else:
-                brightness = round(brightness / 255 * 99, 0)
-            return brightness
-
-        elif domain == SELECT_DOMAIN:
-            # Read current option from select entity and map to value
-            current_option = state.state
-            if current_option in SELECT_OPTION_TO_VALUE:
-                return SELECT_OPTION_TO_VALUE[current_option]
-            # If option not recognized, try to infer from available options
-            _LOGGER.warning(
-                "Unknown select option '%s' for entity %s",
-                current_option,
-                self.heater_entity_id,
-            )
-            return VALUE_OFF
-
+        # Read brightness from light entity
+        brightness = state.attributes.get(ATTR_BRIGHTNESS)
+        if brightness is None:
+            brightness = 0
         else:
-            _LOGGER.error(
-                "Unsupported heater domain '%s' for entity %s",
-                domain,
-                self.heater_entity_id,
-            )
+            brightness = round(brightness / 255 * 99, 0)
+        return brightness
+
+    @property
+    def select_option(self) -> str | None:
+        """Return current option for select entities only."""
+        state = self.hass.states.get(self.heater_entity_id)
+
+        if state is None or state.domain != SELECT_DOMAIN:
             return None
+
+        return state.state
 
     # Presets
     @property
@@ -328,38 +314,81 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
     @property
     def preset_mode(self) -> str | None:
         """Preset current mode."""
-        value = self.heater_value
+        domain = self.heater_domain
 
-        if value is None:
-            return None
-        if value <= VALUE_OFF:
-            return PRESET_NONE
-        if value <= VALUE_FROST:
-            return PRESET_AWAY
-        if value <= VALUE_ECO:
-            return PRESET_ECO
-        if value <= VALUE_COMFORT_2 and self.additional_modes:
-            return PRESET_COMFORT_2
-        if value <= VALUE_COMFORT_1 and self.additional_modes:
-            return PRESET_COMFORT_1
-        return PRESET_COMFORT
+        if domain == LIGHT_DOMAIN:
+            # For light entities, map brightness value to preset
+            value = self.heater_value
+            if value is None:
+                return None
+            if value <= VALUE_OFF:
+                return PRESET_NONE
+            if value <= VALUE_FROST:
+                return PRESET_AWAY
+            if value <= VALUE_ECO:
+                return PRESET_ECO
+            if value <= VALUE_COMFORT_2 and self.additional_modes:
+                return PRESET_COMFORT_2
+            if value <= VALUE_COMFORT_1 and self.additional_modes:
+                return PRESET_COMFORT_1
+            return PRESET_COMFORT
+
+        elif domain == SELECT_DOMAIN:
+            # For select entities, directly map option to preset
+            option = self.select_option
+            if option is None:
+                return None
+            preset = SELECT_OPTION_TO_PRESET.get(option)
+            if preset is None:
+                _LOGGER.warning(
+                    "Unknown select option '%s' for entity %s",
+                    option,
+                    self.heater_entity_id,
+                )
+                return PRESET_NONE
+            # If additional modes not enabled, map comfort-1/-2 to comfort
+            if not self.additional_modes and preset in (PRESET_COMFORT_1, PRESET_COMFORT_2):
+                return PRESET_COMFORT
+            return preset
+
+        return None
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set preset mode."""
-        value = VALUE_OFF
+        domain = self.heater_domain
 
-        if preset_mode == PRESET_AWAY:
-            value = VALUE_FROST
-        elif preset_mode == PRESET_ECO:
-            value = VALUE_ECO
-        elif preset_mode == PRESET_COMFORT_2 and self.additional_modes:
-            value = VALUE_COMFORT_2
-        elif preset_mode == PRESET_COMFORT_1 and self.additional_modes:
-            value = VALUE_COMFORT_1
-        elif preset_mode == PRESET_COMFORT:
-            value = VALUE_COMFORT
+        if domain == LIGHT_DOMAIN:
+            # For light entities, map preset to brightness value
+            value = VALUE_OFF
 
-        await self._async_set_heater_value(value)
+            if preset_mode == PRESET_AWAY:
+                value = VALUE_FROST
+            elif preset_mode == PRESET_ECO:
+                value = VALUE_ECO
+            elif preset_mode == PRESET_COMFORT_2 and self.additional_modes:
+                value = VALUE_COMFORT_2
+            elif preset_mode == PRESET_COMFORT_1 and self.additional_modes:
+                value = VALUE_COMFORT_1
+            elif preset_mode == PRESET_COMFORT:
+                value = VALUE_COMFORT
+
+            await self._async_set_heater_value(value)
+
+        elif domain == SELECT_DOMAIN:
+            # For select entities, directly map preset to option
+            option = PRESET_TO_SELECT_OPTION.get(preset_mode)
+            if option is None:
+                _LOGGER.error("Unknown preset mode '%s'", preset_mode)
+                return
+
+            # Don't try to set comfort-1/-2 if additional modes are not enabled
+            if not self.additional_modes and preset_mode in (PRESET_COMFORT_1, PRESET_COMFORT_2):
+                _LOGGER.warning(
+                    "Cannot set preset %s when additional modes are disabled", preset_mode
+                )
+                return
+
+            await self._async_set_select_option(option)
 
     # Modes
     @property
@@ -369,25 +398,55 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
-        value = VALUE_FROST
+        domain = self.heater_domain
 
-        if hvac_mode == HVACMode.HEAT:
-            value = VALUE_COMFORT
-        elif hvac_mode == HVACMode.OFF:
-            value = VALUE_OFF
+        if domain == LIGHT_DOMAIN:
+            # For light entities, map HVAC mode to brightness value
+            value = VALUE_FROST
 
-        await self._async_set_heater_value(value)
+            if hvac_mode == HVACMode.HEAT:
+                value = VALUE_COMFORT
+            elif hvac_mode == HVACMode.OFF:
+                value = VALUE_OFF
+
+            await self._async_set_heater_value(value)
+
+        elif domain == SELECT_DOMAIN:
+            # For select entities, map HVAC mode to select option
+            if hvac_mode == HVACMode.HEAT:
+                option = SELECT_OPTION_COMFORT
+            elif hvac_mode == HVACMode.OFF:
+                option = SELECT_OPTION_OFF
+            else:
+                _LOGGER.error("Unknown HVAC mode '%s'", hvac_mode)
+                return
+
+            await self._async_set_select_option(option)
 
     @property
     def hvac_mode(self) -> HVACMode | None:
         """Return hvac operation ie. heat, off mode."""
-        value = self.heater_value
+        domain = self.heater_domain
 
-        if value is None:
-            return None
-        if value <= VALUE_OFF:
-            return HVACMode.OFF
-        return HVACMode.HEAT
+        if domain == LIGHT_DOMAIN:
+            # For light entities, check brightness value
+            value = self.heater_value
+            if value is None:
+                return None
+            if value <= VALUE_OFF:
+                return HVACMode.OFF
+            return HVACMode.HEAT
+
+        elif domain == SELECT_DOMAIN:
+            # For select entities, check current option
+            option = self.select_option
+            if option is None:
+                return None
+            if option == SELECT_OPTION_OFF:
+                return HVACMode.OFF
+            return HVACMode.HEAT
+
+        return None
 
     async def _async_sensor_changed(self, event: Event[EventStateChangedData]) -> None:
         """Handle temperature changes."""
@@ -423,38 +482,17 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
 
     async def _async_set_heater_value(self, value):
-        """Set heater value (brightness for light, option for select)."""
-        domain = self.heater_domain
+        """Set brightness value for light entity."""
+        data = {
+            ATTR_ENTITY_ID: self.heater_entity_id,
+            ATTR_BRIGHTNESS: value * 255 / 99,
+        }
+        await self.hass.services.async_call(LIGHT_DOMAIN, LIGHT_SERVICE_TURN_ON, data)
 
-        if domain == LIGHT_DOMAIN:
-            # Set brightness for light entity
-            data = {
-                ATTR_ENTITY_ID: self.heater_entity_id,
-                ATTR_BRIGHTNESS: value * 255 / 99,
-            }
-            await self.hass.services.async_call(LIGHT_DOMAIN, LIGHT_SERVICE_TURN_ON, data)
-
-        elif domain == SELECT_DOMAIN:
-            # Map value to select option and set it
-            option = VALUE_TO_SELECT_OPTION.get(value)
-            if option is None:
-                # Find closest option
-                closest_value = min(VALUE_TO_SELECT_OPTION.keys(), key=lambda x: abs(x - value))
-                option = VALUE_TO_SELECT_OPTION[closest_value]
-                _LOGGER.debug(
-                    "Value %s not found, using closest option %s (value %s)",
-                    value,
-                    option,
-                    closest_value,
-                )
-
-            data = {
-                ATTR_ENTITY_ID: self.heater_entity_id,
-                ATTR_OPTION: option,
-            }
-            await self.hass.services.async_call(SELECT_DOMAIN, SERVICE_SELECT_OPTION, data)
-
-        else:
-            _LOGGER.error(
-                "Cannot set value for unsupported heater domain '%s'", domain
-            )
+    async def _async_set_select_option(self, option):
+        """Set option for select entity."""
+        data = {
+            ATTR_ENTITY_ID: self.heater_entity_id,
+            ATTR_OPTION: option,
+        }
+        await self.hass.services.async_call(SELECT_DOMAIN, SERVICE_SELECT_OPTION, data)
