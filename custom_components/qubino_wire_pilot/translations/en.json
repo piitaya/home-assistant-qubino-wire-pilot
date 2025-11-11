@@ -6,14 +6,12 @@
         "title": "Add Qubino wire pilot thermostat",
         "description": "Create a climate entity that controls the temperature via a switch and sensor.",
         "data": {
-          "heater": "Heater entity",
-          "sensor": "Temperature sensor",
-          "additional_modes": "Additional modes"
+          "heater": "Select entity",
+          "sensor": "Temperature sensor"
         },
         "data_description": {
-          "heater": "Light or select entity used to control the heating.",
-          "sensor": "Temperature sensor that reflect the current temperature.",
-          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+          "heater": "Select entity used to control the heating.",
+          "sensor": "Temperature sensor that reflect the current temperature."
         }
       }
     }
@@ -22,14 +20,10 @@
     "step": {
       "init": {
         "data": {
-          "heater": "Heater entity",
-          "sensor": "Temperature sensor",
-          "additional_modes": "Additional modes"
+          "sensor": "Temperature sensor"
         },
         "data_description": {
-          "heater": "Light or select entity used to control the heating.",
-          "sensor": "Temperature sensor that reflect the current temperature.",
-          "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C)."
+          "sensor": "Temperature sensor that reflect the current temperature."
         }
       }
     }

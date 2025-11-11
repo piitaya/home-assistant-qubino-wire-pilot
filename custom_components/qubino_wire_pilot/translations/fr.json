@@ -4,16 +4,14 @@
     "step": {
       "user": {
         "title": "Ajouter un thermostat Qubino fil pilote",
-        "description": "Créer un entité thermostat à partir d'une entité lumière Qubino.",
+        "description": "Créer un entité thermostat à partir d'une entité de sélection.",
         "data": {
-          "heater": "Entité de chauffage",
-          "sensor": "Capteur de température",
-          "additional_modes": "Modes supplémentaires"
+          "heater": "Entité de sélection",
+          "sensor": "Capteur de température"
         },
         "data_description": {
-          "heater": "Entité lumière ou sélection utilisée pour contrôler le chauffage.",
-          "sensor": "Capteur de température qui reflète la température actuelle.",
-          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
+          "heater": "Entité de sélection utilisée pour contrôler le chauffage.",
+          "sensor": "Capteur de température qui reflète la température actuelle."
         }
       }
     }
@@ -22,14 +20,10 @@
     "step": {
       "init": {
         "data": {
-          "heater": "Entité de chauffage",
-          "sensor": "Capteur de température",
-          "additional_modes": "Modes supplémentaires"
+          "sensor": "Capteur de température"
         },
         "data_description": {
-          "heater": "Entité lumière ou sélection utilisée pour contrôler le chauffage.",
-          "sensor": "Capteur de température qui reflète la température actuelle.",
-          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
+          "sensor": "Capteur de température qui reflète la température actuelle."
         }
       }
     }

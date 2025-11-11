@@ -7,7 +7,6 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.components.select import DOMAIN as SELECT_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN, SensorDeviceClass
 from homeassistant.helpers import entity_registry as er, selector
@@ -17,7 +16,7 @@ from homeassistant.helpers.schema_config_entry_flow import (
     wrapped_entity_config_entry_title,
 )
 
-from .climate import CONF_ADDITIONAL_MODES, CONF_HEATER, CONF_SENSOR, DOMAIN
+from .climate import CONF_HEATER, CONF_SENSOR, DOMAIN
 
 OPTIONS_SCHEMA = {
     vol.Optional(CONF_SENSOR): selector.EntitySelector(
@@ -25,12 +24,11 @@ OPTIONS_SCHEMA = {
             domain=SENSOR_DOMAIN, device_class=SensorDeviceClass.TEMPERATURE
         )
     ),
-    vol.Optional(CONF_ADDITIONAL_MODES): selector.BooleanSelector(),
 }
 
 CONFIG_SCHEMA = {
     vol.Required(CONF_HEATER): selector.EntitySelector(
-        selector.EntitySelectorConfig(domain=[LIGHT_DOMAIN, SELECT_DOMAIN])
+        selector.EntitySelectorConfig(domain=SELECT_DOMAIN)
     ),
     **OPTIONS_SCHEMA,
 }
