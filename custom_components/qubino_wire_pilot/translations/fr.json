@@ -6,12 +6,12 @@
         "title": "Ajouter un thermostat Qubino fil pilote",
         "description": "Créer un entité thermostat à partir d'une entité lumière Qubino.",
         "data": {
-          "heater": "Lumière",
+          "heater": "Entité de chauffage",
           "sensor": "Capteur de température",
           "additional_modes": "Modes supplémentaires"
         },
         "data_description": {
-          "heater": "Entité lumière utilisée pour contrôler le chauffage .",
+          "heater": "Entité lumière ou sélection utilisée pour contrôler le chauffage.",
           "sensor": "Capteur de température qui reflète la température actuelle.",
           "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
         }
@@ -22,12 +22,12 @@
     "step": {
       "init": {
         "data": {
-          "heater": "Lumière",
+          "heater": "Entité de chauffage",
           "sensor": "Capteur de température",
           "additional_modes": "Modes supplémentaires"
         },
         "data_description": {
-          "heater": "Entité lumière utilisée pour contrôler le chauffage .",
+          "heater": "Entité lumière ou sélection utilisée pour contrôler le chauffage.",
           "sensor": "Capteur de température qui reflète la température actuelle.",
           "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
         }
@@ -51,19 +51,6 @@
               "comfort-2": "Confort -2 \u00b0C"
             }
           }
-        }
-      }
-    },
-    "select": {
-      "qubino_wire_pilot_mode": {
-        "name": "Mode du fil pilote",
-        "state": {
-          "Off": "Arrêt",
-          "FrostProtection": "Hors gel",
-          "Eco": "Eco",
-          "ComfortMinus2": "Confort -2 \u00b0C",
-          "ComfortMinus1": "Confort -1 \u00b0C",
-          "Comfort": "Confort"
         }
       }
     }

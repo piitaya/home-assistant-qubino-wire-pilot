@@ -6,12 +6,12 @@
         "title": "Add Qubino wire pilot thermostat",
         "description": "Create a climate entity that controls the temperature via a switch and sensor.",
         "data": {
-          "heater": "Light",
+          "heater": "Heater entity",
           "sensor": "Temperature sensor",
           "additional_modes": "Additional modes"
         },
         "data_description": {
-          "heater": "Light entity used to control the heating.",
+          "heater": "Light or select entity used to control the heating.",
           "sensor": "Temperature sensor that reflect the current temperature.",
           "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
         }
@@ -22,12 +22,12 @@
     "step": {
       "init": {
         "data": {
-          "heater": "Light",
+          "heater": "Heater entity",
           "sensor": "Temperature sensor",
           "additional_modes": "Additional modes"
         },
         "data_description": {
-          "heater": "Light entity used to control the heating.",
+          "heater": "Light or select entity used to control the heating.",
           "sensor": "Temperature sensor that reflect the current temperature.",
           "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C)."
         }
@@ -51,19 +51,6 @@
               "comfort-2": "Comfort -2 \u00b0C"
             }
           }
-        }
-      }
-    },
-    "select": {
-      "qubino_wire_pilot_mode": {
-        "name": "Wire pilot mode",
-        "state": {
-          "Off": "Off",
-          "FrostProtection": "Frost protection",
-          "Eco": "Eco",
-          "ComfortMinus2": "Comfort -2 \u00b0C",
-          "ComfortMinus1": "Comfort -1 \u00b0C",
-          "Comfort": "Comfort"
         }
       }
     }

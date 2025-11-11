@@ -20,6 +20,11 @@ from homeassistant.components.light import (
     DOMAIN as LIGHT_DOMAIN,
     SERVICE_TURN_ON as LIGHT_SERVICE_TURN_ON,
 )
+from homeassistant.components.select import (
+    ATTR_OPTION,
+    DOMAIN as SELECT_DOMAIN,
+    SERVICE_SELECT_OPTION,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -66,6 +71,27 @@ VALUE_ECO = 30
 VALUE_COMFORT_2 = 40
 VALUE_COMFORT_1 = 50
 VALUE_COMFORT = 99
+
+# Select entity option names (for select-based heaters)
+SELECT_OPTION_OFF = "Off"
+SELECT_OPTION_FROST_PROTECTION = "FrostProtection"
+SELECT_OPTION_ECO = "Eco"
+SELECT_OPTION_COMFORT_MINUS_2 = "ComfortMinus2"
+SELECT_OPTION_COMFORT_MINUS_1 = "ComfortMinus1"
+SELECT_OPTION_COMFORT = "Comfort"
+
+# Mapping from select options to brightness values
+SELECT_OPTION_TO_VALUE = {
+    SELECT_OPTION_OFF: VALUE_OFF,
+    SELECT_OPTION_FROST_PROTECTION: VALUE_FROST,
+    SELECT_OPTION_ECO: VALUE_ECO,
+    SELECT_OPTION_COMFORT_MINUS_2: VALUE_COMFORT_2,
+    SELECT_OPTION_COMFORT_MINUS_1: VALUE_COMFORT_1,
+    SELECT_OPTION_COMFORT: VALUE_COMFORT,
+}
+
+# Mapping from brightness values to select options
+VALUE_TO_SELECT_OPTION = {v: k for k, v in SELECT_OPTION_TO_VALUE.items()}
 
 PLATFORM_SCHEMA_COMMON = vol.Schema(
     {
@@ -237,20 +263,52 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         return self._cur_temperature
 
     @property
+    def heater_domain(self) -> str | None:
+        """Return the domain of the heater entity."""
+        state = self.hass.states.get(self.heater_entity_id)
+        if state is None:
+            return None
+        return state.domain
+
+    @property
     def heater_value(self) -> int | None:
-        """Return entity brightness."""
+        """Return entity value (brightness for light, mapped value for select)."""
         state = self.hass.states.get(self.heater_entity_id)
 
         if state is None:
             return None
 
-        brightness = state.attributes.get(ATTR_BRIGHTNESS)
-        if brightness is None:
-            brightness = 0
-        else:
-            brightness = round(brightness / 255 * 99, 0)
+        domain = state.domain
 
-        return brightness
+        if domain == LIGHT_DOMAIN:
+            # Read brightness from light entity
+            brightness = state.attributes.get(ATTR_BRIGHTNESS)
+            if brightness is None:
+                brightness = 0
+            else:
+                brightness = round(brightness / 255 * 99, 0)
+            return brightness
+
+        elif domain == SELECT_DOMAIN:
+            # Read current option from select entity and map to value
+            current_option = state.state
+            if current_option in SELECT_OPTION_TO_VALUE:
+                return SELECT_OPTION_TO_VALUE[current_option]
+            # If option not recognized, try to infer from available options
+            _LOGGER.warning(
+                "Unknown select option '%s' for entity %s",
+                current_option,
+                self.heater_entity_id,
+            )
+            return VALUE_OFF
+
+        else:
+            _LOGGER.error(
+                "Unsupported heater domain '%s' for entity %s",
+                domain,
+                self.heater_entity_id,
+            )
+            return None
 
     # Presets
     @property
@@ -365,10 +423,38 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
             _LOGGER.error("Unable to update from temperature sensor: %s", ex)
 
     async def _async_set_heater_value(self, value):
-        """Turn heater toggleable device on."""
-        data = {
-            ATTR_ENTITY_ID: self.heater_entity_id,
-            ATTR_BRIGHTNESS: value * 255 / 99,
-        }
+        """Set heater value (brightness for light, option for select)."""
+        domain = self.heater_domain
 
-        await self.hass.services.async_call(LIGHT_DOMAIN, LIGHT_SERVICE_TURN_ON, data)
+        if domain == LIGHT_DOMAIN:
+            # Set brightness for light entity
+            data = {
+                ATTR_ENTITY_ID: self.heater_entity_id,
+                ATTR_BRIGHTNESS: value * 255 / 99,
+            }
+            await self.hass.services.async_call(LIGHT_DOMAIN, LIGHT_SERVICE_TURN_ON, data)
+
+        elif domain == SELECT_DOMAIN:
+            # Map value to select option and set it
+            option = VALUE_TO_SELECT_OPTION.get(value)
+            if option is None:
+                # Find closest option
+                closest_value = min(VALUE_TO_SELECT_OPTION.keys(), key=lambda x: abs(x - value))
+                option = VALUE_TO_SELECT_OPTION[closest_value]
+                _LOGGER.debug(
+                    "Value %s not found, using closest option %s (value %s)",
+                    value,
+                    option,
+                    closest_value,
+                )
+
+            data = {
+                ATTR_ENTITY_ID: self.heater_entity_id,
+                ATTR_OPTION: option,
+            }
+            await self.hass.services.async_call(SELECT_DOMAIN, SERVICE_SELECT_OPTION, data)
+
+        else:
+            _LOGGER.error(
+                "Cannot set value for unsupported heater domain '%s'", domain
+            )
