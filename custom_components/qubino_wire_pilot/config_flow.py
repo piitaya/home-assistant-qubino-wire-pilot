@@ -50,6 +50,8 @@ class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
     config_flow = CONFIG_FLOW
     options_flow = OPTIONS_FLOW
 
+    MINOR_VERSION = 2
+
     def async_config_entry_title(self, options: Mapping[str, Any]) -> str:
         """Return config entry title and hide the wrapped entity if registered."""
         # Hide the wrapped entry if registered
