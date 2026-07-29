@@ -38,9 +38,9 @@ from homeassistant.core import (
     State,
     callback,
 )
-from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers import entity_registry as er
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.device import async_entity_id_to_device
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.reload import async_setup_reload_service
@@ -153,17 +153,10 @@ class QubinoWirePilotClimate(ClimateEntity, RestoreEntity):
         """Initialize the climate device."""
 
         registry = er.async_get(hass)
-        device_registry = dr.async_get(hass)
         heater_entity = registry.async_get(heater_entity_id)
-        device_id = heater_entity.device_id if heater_entity else None
         has_entity_name = heater_entity.has_entity_name if heater_entity else False
 
-        self._device_id = device_id
-        if device_id and (device := device_registry.async_get(device_id)):
-            self._attr_device_info = DeviceInfo(
-                connections=device.connections,
-                identifiers=device.identifiers,
-            )
+        self.device_entry = async_entity_id_to_device(hass, heater_entity_id)
 
         if name:
             self._attr_name = name
