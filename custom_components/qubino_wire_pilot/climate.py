@@ -24,6 +24,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_NAME,
+    Platform,
     CONF_UNIQUE_ID,
     EVENT_HOMEASSISTANT_START,
     STATE_UNAVAILABLE,
@@ -48,7 +49,7 @@ from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-from . import DOMAIN, PLATFORMS
+from . import DOMAIN, PLATFORMS, async_has_pilot_wire, async_migrate_to_pilot_wire
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,6 +104,17 @@ async def async_setup_platform(
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
     """Set up the generic thermostat platform."""
+    if await async_has_pilot_wire(hass):
+        await async_migrate_to_pilot_wire(
+            hass,
+            config,
+            er.async_get(hass).async_get_entity_id(
+                Platform.CLIMATE,
+                DOMAIN,
+                config.get(CONF_UNIQUE_ID, f"qubino_wire_pilot_{config[CONF_HEATER]}"),
+            ),
+        )
+        return
 
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
     await _async_setup_config(

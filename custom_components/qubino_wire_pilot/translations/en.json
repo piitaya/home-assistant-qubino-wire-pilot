@@ -13,7 +13,7 @@
         "data_description": {
           "heater": "Light entity used to control the heating.",
           "sensor": "Temperature sensor that reflect the current temperature.",
-          "additional_modes": "Enable additional modes (Comfort -1 \u00b0C and Comfort -2 \u00b0C)."
+          "additional_modes": "Enable additional modes (Comfort -1 °C and Comfort -2 °C)."
         }
       }
     }
@@ -29,7 +29,7 @@
         "data_description": {
           "heater": "Light entity used to control the heating.",
           "sensor": "Temperature sensor that reflect the current temperature.",
-          "additional_modes": "Enable additional modes (Comfort -1\u00b0C and Comfort -2\u00b0C)."
+          "additional_modes": "Enable additional modes (Comfort -1°C and Comfort -2°C)."
         }
       }
     }
@@ -47,12 +47,22 @@
         "state_attributes": {
           "preset_mode": {
             "state": {
-              "comfort-1": "Comfort -1 \u00b0C",
-              "comfort-2": "Comfort -2 \u00b0C"
+              "comfort-1": "Comfort -1 °C",
+              "comfort-2": "Comfort -2 °C"
             }
           }
         }
       }
+    }
+  },
+  "issues": {
+    "install_pilot_wire": {
+      "title": "Qubino Wire Pilot is replaced by Pilot Wire",
+      "description": "Qubino Wire Pilot is no longer maintained. Its features are now part of Pilot Wire, which also adds a power sensor to show when the heater is actually heating.\n\nInstall Pilot Wire from the Marketplace and restart Home Assistant. Your thermostats will be moved to Pilot Wire automatically, keeping their entity ID."
+    },
+    "migrated_to_pilot_wire": {
+      "title": "Qubino Wire Pilot thermostats moved to Pilot Wire",
+      "description": "Your thermostats have been moved to Pilot Wire, keeping their entity ID.\n\nIf you configured them in YAML, remove the `qubino_wire_pilot` platforms from your `configuration.yaml` file. Then uninstall Qubino Wire Pilot from the Marketplace and restart Home Assistant."
     }
   }
 }
