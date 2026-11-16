@@ -13,7 +13,7 @@
         "data_description": {
           "heater": "Entité lumière utilisée pour contrôler le chauffage .",
           "sensor": "Capteur de température qui reflète la température actuelle.",
-          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
+          "additional_modes": "Activer les modes supplémentaires (Confort -1°C et Confort -2°C)."
         }
       }
     }
@@ -29,7 +29,7 @@
         "data_description": {
           "heater": "Entité lumière utilisée pour contrôler le chauffage .",
           "sensor": "Capteur de température qui reflète la température actuelle.",
-          "additional_modes": "Activer les modes supplémentaires (Confort -1\u00b0C et Confort -2\u00b0C)."
+          "additional_modes": "Activer les modes supplémentaires (Confort -1°C et Confort -2°C)."
         }
       }
     }
@@ -47,12 +47,22 @@
         "state_attributes": {
           "preset_mode": {
             "state": {
-              "comfort-1": "Confort -1 \u00b0C",
-              "comfort-2": "Confort -2 \u00b0C"
+              "comfort-1": "Confort -1 °C",
+              "comfort-2": "Confort -2 °C"
             }
           }
         }
       }
+    }
+  },
+  "issues": {
+    "install_pilot_wire": {
+      "title": "Qubino fil pilote est remplacé par Pilot Wire",
+      "description": "Qubino fil pilote n'est plus maintenu. Ses fonctionnalités font maintenant partie de Pilot Wire, qui ajoute aussi un capteur de puissance pour savoir quand le radiateur chauffe vraiment.\n\nInstallez Pilot Wire depuis la Marketplace et redémarrez Home Assistant. Vos thermostats seront déplacés automatiquement vers Pilot Wire, en gardant leur entity ID."
+    },
+    "migrated_to_pilot_wire": {
+      "title": "Les thermostats Qubino fil pilote ont été déplacés vers Pilot Wire",
+      "description": "Vos thermostats ont été déplacés vers Pilot Wire, en gardant leur entity ID.\n\nSi vous les aviez configurés en YAML, supprimez les plateformes `qubino_wire_pilot` de votre fichier `configuration.yaml`. Désinstallez ensuite Qubino fil pilote depuis la Marketplace et redémarrez Home Assistant."
     }
   }
 }

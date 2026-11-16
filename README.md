@@ -1,6 +1,9 @@
 # Home Assistant Component for Qubino Wire Pilot
 
-Home Assistant Component for Qubino Wire Pilot
+> [!WARNING]
+> Qubino Wire Pilot is no longer maintained and is replaced by [Pilot Wire](https://github.com/piitaya/ha-pilot-wire). Pilot Wire supports the Qubino ZMNHJD1 and also Zigbee pilot wire modules, and adds a power sensor to show when the heater is actually heating.
+>
+> To migrate, install Pilot Wire from the Marketplace and restart Home Assistant. Your thermostats are moved to Pilot Wire automatically, keeping their entity ID. Then remove the `qubino_wire_pilot` platforms from `configuration.yaml` if you used YAML, uninstall Qubino Wire Pilot and restart again.
 
 ![CleanShot 2024-09-04 at 12 36 52](https://github.com/user-attachments/assets/0b2f4bc7-35c6-43e4-9050-02696c9f1b9f)
 
